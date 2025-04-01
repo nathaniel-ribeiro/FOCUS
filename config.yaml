@@ -1,0 +1,35 @@
+---
+# ALTERING THESE REQUIRES REBUILDING THE INDEX!!
+model_name: "ViT-B-32"
+pretrained: "laion2b_s34b_b79k"
+# TODO: move this to a command line arg
+index_filepath: "index.ann"
+index_to_taxon_filepath: "index_to_taxon_info.pickle"
+# TODO: move this to a command line arg
+num_trees: 300
+prompt_templates:
+  - "A photo of a {label}"
+#  - "A bad photo of a {label}"
+#  - "A photo of the large {label}"
+#  - "A photo of the small {label}"
+#  - "A cropped photo of a {label}"
+#  - "A close up of a {label}"
+#  - "A blurry photo of a {label}"
+
+learning_rate: 0
+beta_1: 0
+beta_2: 0
+weight_decay: 0
+batch_size: 32
+validation_subset: 0.1
+test_subset: 0.2
+cross_validation_folds: 5
+# if soupify is True, a "soup" of models with randomly selected hyperparameters will be trained
+# and the final model's weights will be a simple average of the weights of all models in the soup.
+# if soupify is False, a traditional hyperparameter sweep with cross validation will select the best
+# hyperparameters and train the final model using only those hyperparameters.
+soupify: True
+use_lora: True
+logging_filepath: "logs.txt"
+# saves the model every n epochs
+save_frequency: 1
