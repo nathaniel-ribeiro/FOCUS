@@ -9,12 +9,12 @@ index_to_taxon_filepath: "index_to_taxon_info.pickle"
 num_trees: 300
 prompt_templates:
   - "A photo of a {label}"
-#  - "A bad photo of a {label}"
-#  - "A photo of the large {label}"
-#  - "A photo of the small {label}"
-#  - "A cropped photo of a {label}"
-#  - "A close up of a {label}"
-#  - "A blurry photo of a {label}"
+  - "A bad photo of a {label}"
+  - "A photo of the large {label}"
+  - "A photo of the small {label}"
+  - "A cropped photo of a {label}"
+  - "A close up of a {label}"
+  - "A blurry photo of a {label}"
 
 learning_rate: 0
 beta_1: 0
