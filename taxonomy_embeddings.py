@@ -94,8 +94,6 @@ if __name__ == "__main__":
         else:
             exit(1)
 
-    # on-disk building is slower and bottlenecked by IO, but allows for giant indices as taxa/number of prompts grows
-    index.on_disk_build(index_filepath)
     index_to_species = {}
 
     items_added = 0
@@ -109,6 +107,7 @@ if __name__ == "__main__":
             items_added += 1
 
     index.build(params['num_trees'])
+    index.save(index_filepath)
 
     with open(index_to_taxon_filepath, "wb") as f:
         pickle.dump(index_to_species, f)
