@@ -12,7 +12,7 @@ with open("config.yaml") as f:
     params = yaml.safe_load(f)
 
 app = FastAPI()
-device = torch.device(torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"))
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model_name = params['model_name']
 pretrained = params['pretrained']
 prompt_templates = params['prompt_templates']
