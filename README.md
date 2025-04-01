@@ -19,8 +19,8 @@ This project is my Computer Science capstone project, a web service for zero-sho
 ### Setup
 1. Clone the repository
    ```sh
-   git clone https://github.com/nathaniel-ribeiro/taxon-classification.git
-   cd taxon-classification
+   git clone https://github.com/nathaniel-ribeiro/UVACapstone.git
+   cd UVACapstone
    
 2. Create a conda environment from the provided `environment.yaml` file
    ```sh
