@@ -95,6 +95,8 @@ if __name__ == "__main__":
             exit(1)
 
     index_to_species = {}
+    # building on disk is slower but allows building indices that may not fit in RAM
+    index.on_disk_build(index_filepath)
 
     items_added = 0
     for species_info in tqdm(df.rows(named=True)):
@@ -107,7 +109,6 @@ if __name__ == "__main__":
             items_added += 1
 
     index.build(params['num_trees'])
-    index.save(index_filepath)
 
     with open(index_to_taxon_filepath, "wb") as f:
         pickle.dump(index_to_species, f)
