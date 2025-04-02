@@ -6,12 +6,10 @@ pretrained: "laion2b_s34b_b79k"
 index_filepath: "index.ann"
 index_to_taxon_filepath: "index_to_taxon_info.pickle"
 # TODO: move this to a command line arg
-num_trees: 500
+num_trees: 1000
 prompt_templates:
   - "A photo of a {label}"
   - "A bad photo of a {label}"
-  - "A photo of the large {label}"
-  - "A photo of the small {label}"
   - "A cropped photo of a {label}"
   - "A close up of a {label}"
   - "A blurry photo of a {label}"
