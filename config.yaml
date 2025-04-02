@@ -6,7 +6,7 @@ pretrained: "laion2b_s34b_b79k"
 index_filepath: "index.ann"
 index_to_taxon_filepath: "index_to_taxon_info.pickle"
 # TODO: move this to a command line arg
-num_trees: 1000
+num_trees: 500
 prompt_templates:
   - "A photo of a {label}"
   - "A bad photo of a {label}"
