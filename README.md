@@ -102,3 +102,6 @@ this repository for contributions after December 2025 when I graduate. I welcome
 ### Contact
 Feel free to [email me](mailto:nathaniel.eldred.ribeiro@gmail.com) with any questions, comments, or concerns you might have and I will do my best to get back to you in a timely fashion. 
 You can also open an issue on my GitHub.
+
+### Like this repository?
+If you have spare cash lying around, consider [taking pity on a poor wretch like me][https://buymeacoffee.com/nathanielribeiro].
