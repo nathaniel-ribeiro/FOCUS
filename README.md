@@ -104,4 +104,4 @@ Feel free to [email me](mailto:nathaniel.eldred.ribeiro@gmail.com) with any ques
 You can also open an issue on my GitHub.
 
 ### Like this repository?
-If you have spare cash lying around, consider [taking pity on a poor wretch like me][https://buymeacoffee.com/nathanielribeiro].
+If you have spare cash lying around, consider [taking pity on a poor wretch like me](https://buymeacoffee.com/nathanielribeiro).
