@@ -14,6 +14,7 @@ with open('server_config.yaml') as file:
     params = yaml.safe_load(file)
 
 data_dir = params['data_dir']
+port = params['port']
 
 @app.on_event("startup")
 def load_dataset():
@@ -33,4 +34,4 @@ def get_test_sample_by_index(idx: int):
     pass
 
 if __name__ == "__main__":
-    pass
+    uvicorn.run(app, host="127.0.0.1", port=port)
