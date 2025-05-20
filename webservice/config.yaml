@@ -1,5 +1,4 @@
 ---
-data_dir: "../"
 # ALTERING THESE REQUIRES REBUILDING THE INDEX!!
 model_name: "ViT-B-32"
 pretrained: "laion2b_s34b_b79k"
