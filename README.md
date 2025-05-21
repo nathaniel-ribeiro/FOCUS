@@ -85,6 +85,9 @@ request.
 
 The returned JSON will look something like:
 
+##Training
+For the training part of this script, you'll need to download the iNaturalist 2018 competition data. I stored my files in a data/ directory, but if you name yours something else, you should update the .gitignore to prevent tracking on the data files. This data set is ~160 GB so make sure you have the disk space to store it!
+
 ### Coming Soon
 - Fine-tuning script
   - Options to use LoRA/QLoRA
