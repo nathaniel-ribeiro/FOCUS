@@ -45,4 +45,8 @@ val_dataset = INaturalistDataset(val_root_dir, val_annotations_filepath, val_tra
 train_loader = data.DataLoader(train_dataset, BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
 val_loader = data.DataLoader(val_dataset, BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS)
 
-train(train_loader)
+try:
+    train(train_loader)
+except KeyboardInterrupt:
+    torch.cuda.empty_cache()
+    exit(0)
