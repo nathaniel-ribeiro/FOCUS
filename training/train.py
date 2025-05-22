@@ -41,5 +41,4 @@ def _collate(batch):
 train_loader = data.DataLoader(train_dataset, BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS, collate_fn=_collate)
 val_loader = data.DataLoader(val_dataset, BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS, collate_fn=_collate)
 
-trainer = Trainer(train_loader, val_loader, options)
-trainer.train()
+train(train_loader)
