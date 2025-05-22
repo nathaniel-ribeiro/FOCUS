@@ -1,2 +1,6 @@
 ---
 data_dir: "../data/"
+target_size: !!python/tuple [224, 224]
+batch_size: 64
+num_workers: 8
+...
