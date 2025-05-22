@@ -8,10 +8,10 @@ import yaml
 from pathlib import Path
 import numpy as np
 from taxonomy import Taxonomy
+from utils import load_config_file
 
-with open('config.yaml') as f:
-    params = yaml.safe_load(f)
-data_dir = params['data_dir']
+options = load_config_file('config.yaml')
+data_dir = options.data_dir
 
 categories_filepath = os.path.join(data_dir, 'categories.json')
 with open(categories_filepath) as f:
