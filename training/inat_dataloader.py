@@ -35,7 +35,7 @@ class INaturalistDataset(data.Dataset):
         image_taxonomy = categories[image_id]
         image = Image.open(path).convert('RGB')
         image_numpy = np.array(image)
-        augmented_image = self.augmentations(image=image_numpy)
+        augmented_image = self.augmentations(image=image_numpy)['image']
         return augmented_image, image_id, image_taxonomy
     
     def __len__(self):
