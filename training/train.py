@@ -5,7 +5,7 @@ import torch.multiprocessing as mp
 import os
 import albumentations as A
 import yaml
-from inat_dataloader import INaturalistDataset
+from inat_data import INaturalistDataset
 from torch.utils.data._utils.collate import default_collate
 from utils import load_config_file
 from trainer import train
@@ -39,16 +39,10 @@ val_root_dir = os.path.join(DATA_DIR, 'train_val2018/')
 train_annotations_filepath = os.path.join(DATA_DIR, 'train2018.json')
 val_annotations_filepath = os.path.join(DATA_DIR, 'val2018.json')
 
-train_dataset = INaturalistDataset(train_root_dir, train_annotations_filepath, train_transforms)
-val_dataset = INaturalistDataset(val_root_dir, val_annotations_filepath, val_transforms)
+train_dataset = INaturalistDataset(train_root_dir, train_annotations_filepath, train_transforms, "stochastic")
+val_dataset = INaturalistDataset(val_root_dir, val_annotations_filepath, val_transforms, "deterministic")
 
-def _collate(batch):
-    images, ids, taxonomies = zip(*batch)
-    images = default_collate(images)
-    ids = torch.tensor(ids, dtype=torch.long)
-    return images, ids, list(taxonomies)
-
-train_loader = data.DataLoader(train_dataset, BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS, collate_fn=_collate)
-val_loader = data.DataLoader(val_dataset, BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS, collate_fn=_collate)
+train_loader = data.DataLoader(train_dataset, BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
+val_loader = data.DataLoader(val_dataset, BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS)
 
 train(train_loader)

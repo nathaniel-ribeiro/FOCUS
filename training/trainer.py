@@ -7,49 +7,42 @@ from tqdm import tqdm
 import open_clip
 import math
 
-device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
-options = load_config_file('config.yaml')
+def train(train_loader):   
+    device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
+    options = load_config_file('config.yaml')
 
-MODEL_NAME = options.model_name
-PRETRAINED = options.pretrained
-LEARNING_RATE = options.learning_rate
-INITIAL_TEMP = options.initial_temp
-EPOCHS = options.epochs
-SAVE_FREQ = options.save_freq
+    MODEL_NAME = options.model_name
+    PRETRAINED = options.pretrained
+    LEARNING_RATE = options.learning_rate
+    INITIAL_TEMP = options.initial_temp
+    EPOCHS = options.epochs
+    SAVE_FREQ = options.save_freq
 
-model, _, preprocess = open_clip.create_model_and_transforms(
-    MODEL_NAME, pretrained=PRETRAINED
-)
-tokenizer = open_clip.get_tokenizer(MODEL_NAME)
-model.to(device)
-model.train()
+    model, _, preprocess = open_clip.create_model_and_transforms(
+        MODEL_NAME, pretrained=PRETRAINED
+    )
+    tokenizer = open_clip.get_tokenizer(MODEL_NAME)
+    model.to(device)
+    model.train()
 
-for param in model.parameters():
-    param.requires_grad = True
+    for param in model.parameters():
+        param.requires_grad = True
 
-def _build_prompt(taxonomy):
-    # TODO: move the prompt generation to inat_dataloader and randomly select a template from a bank of templates
-    return f"A photo of a {taxonomy.name}."
-
-temperature = torch.log(torch.tensor([1.0 / INITIAL_TEMP])).to(device)
-# TODO: optimize temperature
-optimizer = optim.AdamW(model.parameters(), lr=LEARNING_RATE)
-criterion = nn.CrossEntropyLoss()
-
-def train(train_loader):
-    global temperature
+    temperature = torch.log(torch.tensor([1.0 / INITIAL_TEMP])).to(device)
+    # TODO: optimize temperature
+    optimizer = optim.AdamW(model.parameters(), lr=LEARNING_RATE)
+    criterion = nn.CrossEntropyLoss()
     
     for epoch in range(EPOCHS):
         model.train()
         loss_for_epoch = 0.0
         
-        for batch_idx, (images, _, taxonomies) in tqdm(enumerate(train_loader)):
+        for batch_idx, (images, _, prompts) in tqdm(enumerate(train_loader)):
             optimizer.zero_grad()
             images = images.to(device)
-            # omitting preprocessing because Albumentations pipeline handles this
-            prompts = [_build_prompt(taxonomy) for taxonomy in taxonomies]
             tokenized = tokenizer(prompts).to(device)
             
+            # omitting preprocessing for images because Albumentations pipeline handles this
             image_features = model.encode_image(images).to(device)
             text_features = model.encode_text(tokenized).to(device)
             
