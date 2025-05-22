@@ -28,6 +28,7 @@ for param in model.parameters():
     param.requires_grad = True
 
 def _build_prompt(taxonomy):
+    # TODO: move the prompt generation to inat_dataloader and randomly select a template from a bank of templates
     return f"A photo of a {taxonomy.name}."
 
 temperature = torch.log(torch.tensor([1.0 / INITIAL_TEMP])).to(device)

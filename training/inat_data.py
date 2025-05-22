@@ -8,11 +8,14 @@ import yaml
 from pathlib import Path
 import numpy as np
 from taxonomy import Taxonomy
-from utils import load_config_file, load_categories
+from utils import load_config_file
 
 options = load_config_file('config.yaml')
 data_dir = options.data_dir
-categories = load_categories()
+
+categories_filepath = os.path.join(data_dir, 'categories.json')
+with open(categories_filepath) as f:
+    categories = json.load(f)
 
 class INaturalistDataset(data.Dataset):
     def __init__(self, root_directory, annotations_filepath, augmentations):
