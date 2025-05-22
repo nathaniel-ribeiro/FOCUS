@@ -113,7 +113,7 @@ class INaturalistDataset(data.Dataset):
             raise ValueError("Acceptable values for prompt_generation_mode are deterministic or stochastic")
         self.prompt_generation_mode = prompt_generation_mode
     
-    def get_prompt(taxonomy):
+    def get_prompt(self, taxonomy):
         if self.prompt_generation_mode == "deterministic":
             return f"A photo of a {taxonomy.name}."
         else:
@@ -125,7 +125,7 @@ class INaturalistDataset(data.Dataset):
         path = os.path.join(data_dir, self.image_filenames[idx])
         image_id = self.ids[idx]
         image_taxonomy = Taxonomy(*categories[image_id].values())
-        image_prompt = get_prompt(image_taxonomy)
+        image_prompt = self.get_prompt(image_taxonomy)
         image = Image.open(path).convert('RGB')
         image_numpy = np.array(image)
         augmented_image = self.augmentations(image=image_numpy)['image']
