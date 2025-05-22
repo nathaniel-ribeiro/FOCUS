@@ -6,6 +6,7 @@ import os
 import albumentations as A
 import yaml
 from inat_dataloader import INaturalistDataset
+from torch.utils.data._utils.collate import default_collate
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -29,12 +30,19 @@ val_annotations_filepath = os.path.join(data_dir, 'val2018.json')
 train_dataset = INaturalistDataset(train_root_dir, train_annotations_filepath, train_transforms)
 val_dataset = INaturalistDataset(val_root_dir, val_annotations_filepath, val_transforms)
 
+def _collate(batch):
+    images, ids, taxonomies = zip(*batch)
+    images = default_collate(images)
+    ids = torch.tensor(ids, dtype=torch.long)
+    return images, ids, list(taxonomies)
+
 # PyTorch recommends at most 8 processes or dataloader will risk freezing up
 num_workers = min(mp.cpu_count(), 8)
-train_loader = data.DataLoader(train_dataset, batch_size, shuffle=True, num_workers=num_workers)
-val_loader = data.DataLoader(val_dataset, batch_size, shuffle=False, num_workers=num_workers)
+train_loader = data.DataLoader(train_dataset, batch_size, shuffle=True, num_workers=num_workers, collate_fn=_collate)
+val_loader = data.DataLoader(val_dataset, batch_size, shuffle=False, num_workers=num_workers, collate_fn=_collate)
 
-for image_tensors, ids, _ in train_loader:
-#     print(image_tensors['image'].shape)
-#     print(len(ids))
+for image_tensors, ids, taxonomies in train_loader:
+    print(image_tensors.shape)
+    print(len(ids))
+    print(taxonomies)
     break

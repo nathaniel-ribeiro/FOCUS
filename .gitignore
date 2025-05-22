@@ -2,3 +2,5 @@
 *.pickle
 *.slurm
 *.out
+*.log
+data/

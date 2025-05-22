@@ -1,5 +1,5 @@
 class Taxonomy:
-    def __init__(self, kingdom, name, family, supercategory, phylum, taxon_id, order, genus, taxon_class)
+    def __init__(self, kingdom, name, family, supercategory, phylum, taxon_id, order, genus, taxon_class):
         self.kingdom = kingdom
         self.name = name
         self.family = family
