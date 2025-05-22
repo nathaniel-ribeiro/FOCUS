@@ -7,6 +7,7 @@ import numpy
 import yaml
 from pathlib import Path
 import numpy as np
+from taxonomy import Taxonomy
 
 with open('config.yaml') as f:
     params = yaml.safe_load(f)
@@ -32,7 +33,7 @@ class INaturalistDataset(data.Dataset):
     def __getitem__(self, idx):
         path = os.path.join(data_dir, self.image_filenames[idx])
         image_id = self.ids[idx]
-        image_taxonomy = categories[image_id]
+        image_taxonomy = Taxonomy(*categories[image_id].values())
         image = Image.open(path).convert('RGB')
         image_numpy = np.array(image)
         augmented_image = self.augmentations(image=image_numpy)['image']
