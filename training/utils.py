@@ -6,7 +6,6 @@ class TrainingOptions:
     data_dir: str
     target_size: tuple
     batch_size: int
-    num_workers: int
     model_name: str
     pretrained: str
     learning_rate: float

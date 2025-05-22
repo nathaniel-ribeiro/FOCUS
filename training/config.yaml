@@ -1,12 +1,12 @@
 ---
 data_dir: "../data/"
 target_size: [224, 224]
-batch_size: 256
+batch_size: 900
 num_workers: 8
 model_name: "ViT-B-32"
 pretrained: "laion2b_s34b_b79k"
 learning_rate: 0.000005
 epochs: 10
 save_freq: 1
-initial_temperature: 0.07
+initial_temp: 0.07
 ...

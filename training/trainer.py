@@ -4,6 +4,8 @@ import torch.nn as nn
 from utils import load_config_file
 import itertools
 from tqdm import tqdm
+import open_clip
+import math
 
 device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
 options = load_config_file('config.yaml')
@@ -27,34 +29,36 @@ for param in model.parameters():
 
 def _build_prompt(taxonomy):
     return f"A photo of a {taxonomy.name}."
-    
-temperature = nn.Parameter(torch.ones([]) * torch.log(torch.tensor(1 / INITIAL_TEMP))).to(device)
-optimizer = optim.AdamW(itertools.chain(model.parameters(), temperature), lr=LEARNING_RATE)
+
+temperature = torch.log(torch.tensor([1.0 / INITIAL_TEMP])).to(device)
+# TODO: optimize temperature
+optimizer = optim.AdamW(model.parameters(), lr=LEARNING_RATE)
 criterion = nn.CrossEntropyLoss()
 
 def train(train_loader):
     global temperature
     
-    for epoch in tqdm(range(EPOCHS)):
+    for epoch in range(EPOCHS):
         model.train()
         loss_for_epoch = 0.0
         
-        for batch_idx, (images, _, taxonomies) in train_loader:
+        for batch_idx, (images, _, taxonomies) in tqdm(enumerate(train_loader)):
             optimizer.zero_grad()
             images = images.to(device)
+            # omitting preprocessing because Albumentations pipeline handles this
             prompts = [_build_prompt(taxonomy) for taxonomy in taxonomies]
             tokenized = tokenizer(prompts).to(device)
             
-            image_features = model.encode_images(images)
-            text_features = model.encode_text(tokenized)
+            image_features = model.encode_image(images).to(device)
+            text_features = model.encode_text(tokenized).to(device)
             
             logits_per_image = temperature.exp() * image_features @ text_features.T
             logits_per_text = logits_per_image.T
             
-            targets = torch.arange(images.size(0)).to(device)
+            targets = torch.arange(images.size(0), dtype=torch.long).to(device)
             
-            loss_i2t = cross_entropy(logits_per_image, targets)
-            loss_t2i = cross_entropy(logits_per_text, targets)
+            loss_i2t = criterion(logits_per_image, targets)
+            loss_t2i = criterion(logits_per_text, targets)
             loss = (loss_i2t + loss_t2i) / 2.0
             loss_for_epoch += loss.item()
             
