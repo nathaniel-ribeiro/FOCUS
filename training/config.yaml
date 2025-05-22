@@ -1,6 +1,8 @@
 ---
 data_dir: "../data/"
-target_size: !!python/tuple [224, 224]
+target_size: [224, 224]
 batch_size: 64
 num_workers: 8
+model_name: "ViT-B-32"
+pretrained: "laion2b_s34b_b79k"
 ...

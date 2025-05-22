@@ -8,8 +8,7 @@ import yaml
 from inat_dataloader import INaturalistDataset
 from torch.utils.data._utils.collate import default_collate
 from utils import load_config_file
-
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+from train import train
 
 options = load_config_file('config.yaml')
 DATA_DIR = options.data_dir
@@ -41,3 +40,6 @@ def _collate(batch):
 
 train_loader = data.DataLoader(train_dataset, BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS, collate_fn=_collate)
 val_loader = data.DataLoader(val_dataset, BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS, collate_fn=_collate)
+
+trainer = Trainer(train_loader, val_loader, options)
+trainer.train()

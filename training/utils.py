@@ -11,4 +11,6 @@ class TrainingOptions:
 def load_config_file(path):
     with open(path) as f:
         params = yaml.safe_load(f)
+    
+    params['target_size'] = tuple(params['target_size'])
     return TrainingOptions(**params)
