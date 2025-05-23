@@ -1,6 +1,5 @@
 import yaml
 from dataclasses import dataclass
-from functools import cache
 import os
 import json
 
@@ -16,7 +15,6 @@ class TrainingOptions:
     save_freq: int
     initial_temp: float
 
-@cache
 def load_config_file(path):
     with open(path) as f:
         params = yaml.safe_load(f)
@@ -24,7 +22,6 @@ def load_config_file(path):
     params['target_size'] = tuple(params['target_size'])
     return TrainingOptions(**params)
 
-@cache
 def load_categories():
     options = load_config_file('config.yaml')
     data_dir = options.data_dir

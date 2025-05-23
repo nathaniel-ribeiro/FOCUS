@@ -9,10 +9,41 @@ from pathlib import Path
 import numpy as np
 from taxonomy import Taxonomy
 from utils import load_config_file, load_categories
+import torch.multiprocessing as mp
+import albumentations as A
 
 options = load_config_file('config.yaml')
 data_dir = options.data_dir
 categories = load_categories()
+
+DATA_DIR = options.data_dir
+TARGET_SIZE = options.target_size
+BATCH_SIZE = options.batch_size
+
+# if more than 8 workers are used, dataloader may freeze up
+NUM_WORKERS = min(mp.cpu_count() - 1, 8)
+
+# NOTE: OpenCLIP normalization is replicated, skip OpenCLIP's built in preprocessor
+OPENCLIP_MEAN = [0.48145466, 0.4578275, 0.40821073]
+OPENCLIP_STD  = [0.26862954, 0.26130258, 0.27577711]
+
+train_transforms = A.Compose([
+    A.RandomResizedCrop(size=TARGET_SIZE),
+    A.HorizontalFlip(p=0.5),
+    A.Normalize(mean=OPENCLIP_MEAN, std=OPENCLIP_STD), 
+    A.ToTensorV2(),
+])
+
+test_transforms = A.Compose([
+     A.CenterCrop(height=TARGET_SIZE[0], width=TARGET_SIZE[1], pad_if_needed=True), 
+     A.Normalize(mean=OPENCLIP_MEAN, std=OPENCLIP_STD), 
+     A.ToTensorV2(),
+])
+
+train_root_dir = os.path.join(DATA_DIR, 'train_val2018/')
+test_root_dir = os.path.join(DATA_DIR, 'train_val2018/')
+train_annotations_filepath = os.path.join(DATA_DIR, 'train2018.json')
+test_annotations_filepath = os.path.join(DATA_DIR, 'val2018.json')
 
 imagenet_templates = [
     'A bad photo of a {label}.',
@@ -98,7 +129,7 @@ imagenet_templates = [
 ]
 
 class INaturalistDataset(data.Dataset):
-    def __init__(self, root_directory, annotations_filepath, augmentations, prompt_generation_mode="deterministic"):
+    def __init__(self, root_directory, annotations_filepath, augmentations, random_prompts=False):
         with open(annotations_filepath) as f:
             annotations_data = json.load(f)
         
@@ -109,17 +140,15 @@ class INaturalistDataset(data.Dataset):
         self.ids = [int(Path(image_filename).parts[2]) for image_filename in self.image_filenames]
         
         self.augmentations = augmentations
-        if prompt_generation_mode not in ["deterministic", "stochastic"]:
-            raise ValueError("Acceptable values for prompt_generation_mode are deterministic or stochastic")
-        self.prompt_generation_mode = prompt_generation_mode
+        self.random_prompts = random_prompts
     
     def get_prompt(self, taxonomy):
-        if self.prompt_generation_mode == "deterministic":
-            return f"A photo of a {taxonomy.name}."
-        else:
+        if self.random_prompts:
             random_template = random.choice(imagenet_templates)
             random_prompt = random_template.format(label=taxonomy.name)
             return random_prompt
+        else:
+            return taxonomy.name
         
     def __getitem__(self, idx):
         path = os.path.join(data_dir, self.image_filenames[idx])
@@ -133,4 +162,17 @@ class INaturalistDataset(data.Dataset):
     
     def __len__(self):
         return len(self.image_filenames)
-        
+
+def make_datasets():   
+    train_dataset = INaturalistDataset(train_root_dir, train_annotations_filepath, train_transforms, True)
+    test_dataset = INaturalistDataset(test_root_dir, test_annotations_filepath, test_transforms, False)
+    return train_dataset, test_dataset
+
+def make_dataloaders():
+    train_dataset, test_dataset = make_datasets()
+    train_loader = data.DataLoader(train_dataset, BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
+    test_loader = data.DataLoader(test_dataset, BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS)
+    return train_loader, test_loader
+
+def get_labels():
+    return [Taxonomy(*category.values()).name for category in categories]
