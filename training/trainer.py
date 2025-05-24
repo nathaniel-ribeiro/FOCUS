@@ -40,6 +40,17 @@ class CLIPClassifier(nn.Module):
         temperature = torch.clamp(self.temperature.exp(), max=100.0)
         logits = temperature * image_features @ text_features.T
         return logits.softmax(dim=-1)
+    
+    def forward_contrastive(self, images, labels):
+        tokenized = self.tokenizer(labels).to(images.device)
+        image_features = self.model.encode_image(images)
+        text_features = self.model.encode_text(tokenized)
+        
+        temperature = torch.clamp(temperature.exp(), max=100.0)                
+        logits_per_image = temperature * image_features @ text_features.T
+        logits_per_text = logits_per_image.T
+        return logits_per_image, logits_per_text
+        
 
 class Trainer:
     def __init__(self, options, train_loader, val_loader, test_loader, labels):
@@ -73,16 +84,9 @@ class Trainer:
             for batch_idx, (images, _, prompts) in tqdm(enumerate(self.train_loader)):
                 optimizer.zero_grad()
                 images = images.to(self.device)
-                tokenized = self.model.tokenize(prompts).to(self.device)
+                prompts = prompts.to(self.device)
 
-                # omitting preprocessing for images because Albumentations pipeline handles this
-                image_features = self.model.encode_image(images).to(self.device)
-                text_features = self.model.encode_text(tokenized).to(self.device)
-                
-                temperature = torch.clamp(self.model.temperature.exp(), max=100.0)
-                
-                logits_per_image = temperature * image_features @ text_features.T
-                logits_per_text = logits_per_image.T
+                logits_per_image, logits_per_text = self.model.forward_contrastive(images, prompts)
 
                 targets = torch.arange(images.size(0), dtype=torch.long).to(self.device)
 
