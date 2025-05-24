@@ -6,26 +6,27 @@ import torch.nn as nn
 import numpy as np
 
 # TODO: separate config.yaml into a train options and test options
-def evaluate(model, test_loader):
+def evaluate(model, test_loader, top_ks=[1]):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model.to(device)
     model.eval()
 
-    all_preds = []
-    all_ids = []
+    correct_at_k = {k: 0 for k in top_ks}
+    total = 0
 
     with torch.no_grad():
         for images, ids, _ in tqdm(test_loader):
             images = images.to(device)
-            predicted_probabilities = model(images).to(device)
-            predicted_classes = torch.argmax(predicted_probabilities, dim=1).to(device)
+            labels = ids.to(device)
+            logits = model(images) 
 
-            all_preds.append(predicted_classes.cpu().numpy())
-            all_ids.append(ids.numpy())
+            topk_preds = torch.topk(logits, k=max(top_ks), dim=1).indices
 
-    all_preds = np.concatenate(all_preds)
-    all_ids = np.concatenate(all_ids)
+            for k in top_ks:
+                correct = topk_preds[:, :k].eq(labels.view(-1, 1)).any(dim=1).sum().item()
+                correct_at_k[k] += correct
 
-    accuracy = np.mean(all_preds == all_ids)
-    print(f"Test Accuracy: {accuracy:.4f}")
-    return accuracy, all_preds, all_ids
+            total += labels.size(0)
+
+    topk_accuracies = [correct_at_k[k] / total for k in top_ks]
+    return topk_accuracies

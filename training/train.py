@@ -13,4 +13,8 @@ labels = get_labels()
 # trainer.train()
 model = CLIPClassifier(options.model_name, options.pretrained, labels).to(device)
 
-evaluate(model, test_loader)
+top_ks = [1, 3, 5]
+top_k_accuracies = evaluate(model, test_loader, top_ks = top_ks)
+
+for k, accuracy in zip(top_ks, top_k_accuracies):
+    print(f"Top-{k} accuracy: {accuracy:.4f}")

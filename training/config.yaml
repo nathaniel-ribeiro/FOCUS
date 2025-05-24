@@ -2,8 +2,10 @@
 data_dir: "../data/"
 target_size: [224, 224]
 batch_size: 512
-model_name: "ViT-B-32"
-pretrained: "laion2b_s34b_b79k"
+# model_name: "ViT-B-32"
+# pretrained: "laion2b_s34b_b79k"
+model_name: "ViT-H-14-378-quickgelu"
+pretrained: "dfn5b"
 learning_rate: 0.000005
 epochs: 10
 save_freq: 1
