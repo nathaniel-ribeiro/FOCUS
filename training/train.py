@@ -9,12 +9,9 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 options = load_config_file('config.yaml')
 train_loader, test_loader = make_dataloaders()
 labels = get_labels()
-# trainer = Trainer(options, train_loader, None, test_loader, labels)
-# trainer.train()
-model = CLIPClassifier(options.model_name, options.pretrained, labels).to(device)
+trainer = Trainer(options, train_loader, None, test_loader, labels)
+trainer.train()
 
-top_ks = [1, 3, 5]
-top_k_accuracies = evaluate(model, test_loader, top_ks = top_ks)
-
-for k, accuracy in zip(top_ks, top_k_accuracies):
-    print(f"Top-{k} accuracy: {accuracy:.4f}")
+# model = CLIPClassifier(options.model_name, options.pretrained, labels).to(device)
+# top_ks = [1, 3, 5]
+# top_k_accuracies = evaluate(model, test_loader, top_ks = top_ks)
