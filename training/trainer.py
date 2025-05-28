@@ -10,8 +10,7 @@ import numpy as np
 from classifier import CLIPClassifier        
 
 class Trainer:
-    def __init__(self, options, train_loader, val_loader, test_loader, labels):
-        self.device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
+    def __init__(self, model, options, train_loader, val_loader, test_loader):
         self.options = options
        
         self.LEARNING_RATE = self.options.learning_rate
@@ -19,7 +18,7 @@ class Trainer:
         self.EPOCHS = self.options.epochs
         self.SAVE_FREQ = self.options.save_freq
         
-        self.model = CLIPClassifier(options.model_name, options.pretrained, labels).to(self.device)
+        self.model = model
         
         self.train_loader = train_loader
         self.val_loader = val_loader
@@ -34,16 +33,16 @@ class Trainer:
         optimizer = optim.AdamW(self.model.parameters(), lr=self.LEARNING_RATE)
         criterion = nn.CrossEntropyLoss()
 
-        for epoch in range(self.EPOCHS):
+        for epoch in tqdm(range(self.EPOCHS)):
             self.model.train()
             loss_for_epoch = 0.0
 
-            for batch_idx, (images, _, prompts) in tqdm(enumerate(self.train_loader)):
+            for images, _, prompts in self.train_loader:
                 optimizer.zero_grad()
                 images = images.to(self.device)
                 logits_per_image, logits_per_text = self.model.forward_contrastive(images, prompts)
 
-                targets = torch.arange(images.size(0), dtype=torch.long).to(self.device)
+                targets = torch.arange(images.size(0), dtype=torch.long).to(self.model.device)
 
                 loss_i2t = criterion(logits_per_image, targets)
                 loss_t2i = criterion(logits_per_text, targets)
@@ -54,10 +53,3 @@ class Trainer:
                 optimizer.step()
                 
             avg_loss_for_epoch = loss_for_epoch / len(self.train_loader)
-            print(f"Training loss for epoch {epoch}: {avg_loss_for_epoch:.4f}")
-    
-    def validate(self):
-        pass
-    
-    def test():
-        pass
