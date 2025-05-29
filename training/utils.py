@@ -2,6 +2,11 @@ import yaml
 from dataclasses import dataclass
 import os
 import json
+import torch
+
+def get_device():
+    device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
+    return device
 
 @dataclass
 class TrainingOptions:

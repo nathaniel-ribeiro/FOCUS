@@ -38,7 +38,7 @@ class Trainer:
 
             for images, _, prompts in self.train_loader:
                 optimizer.zero_grad()
-                images = images.to(self.device)
+                images = images.to(self.model.device)
                 logits_per_image, logits_per_text = self.model.forward_contrastive(images, prompts)
 
                 targets = torch.arange(images.size(0), dtype=torch.long).to(self.model.device)
