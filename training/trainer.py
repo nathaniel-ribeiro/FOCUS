@@ -1,13 +1,14 @@
 import torch
 import torch.optim as optim
 import torch.nn as nn
-from utils import load_config_file
+from utils import load_config_file, get_device
 import itertools
 from tqdm import tqdm
 import open_clip
 import math
-import numpy as np
-from classifier import CLIPClassifier        
+import numpy as np  
+
+device = get_device()
 
 class Trainer:
     def __init__(self, model, options, train_loader, val_loader, test_loader):
@@ -38,10 +39,10 @@ class Trainer:
 
             for images, _, prompts in self.train_loader:
                 optimizer.zero_grad()
-                images = images.to(self.model.device)
+                images = images.to(device)
                 logits_per_image, logits_per_text = self.model.forward_contrastive(images, prompts)
 
-                targets = torch.arange(images.size(0), dtype=torch.long).to(self.model.device)
+                targets = torch.arange(images.size(0), dtype=torch.long).to(device)
 
                 loss_i2t = criterion(logits_per_image, targets)
                 loss_t2i = criterion(logits_per_text, targets)

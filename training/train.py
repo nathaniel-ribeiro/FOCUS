@@ -1,6 +1,7 @@
 from inat_data import make_dataloaders, get_labels
 from utils import load_config_file, get_device
-from trainer import Trainer, CLIPClassifier
+from trainer import Trainer
+from models import CLIPClassifier
 from evaluator import evaluate
 import torch
 
