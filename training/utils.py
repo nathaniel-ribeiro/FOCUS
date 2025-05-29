@@ -13,7 +13,6 @@ class TrainingOptions:
     learning_rate: float
     epochs: int
     save_freq: int
-    initial_temp: float
 
 def load_config_file(path):
     with open(path) as f:

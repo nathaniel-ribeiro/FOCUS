@@ -27,8 +27,11 @@ NUM_WORKERS = min(mp.cpu_count() - 1, 8)
 OPENCLIP_MEAN = [0.48145466, 0.4578275, 0.40821073]
 OPENCLIP_STD  = [0.26862954, 0.26130258, 0.27577711]
 
+BRIGHTNESS, CONTRAST, SATURATION, HUE = 0.4, 0.4, 0.4, 0.25
+
 train_transforms = A.Compose([
     A.RandomResizedCrop(size=TARGET_SIZE),
+    A.ColorJitter(BRIGHTNESS, CONTRAST, SATURATION, HUE),
     A.HorizontalFlip(p=0.5),
     A.Normalize(mean=OPENCLIP_MEAN, std=OPENCLIP_STD), 
     A.ToTensorV2(),

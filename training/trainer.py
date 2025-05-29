@@ -14,7 +14,6 @@ class Trainer:
         self.options = options
        
         self.LEARNING_RATE = self.options.learning_rate
-        self.INITIAL_TEMP = self.options.initial_temp
         self.EPOCHS = self.options.epochs
         self.SAVE_FREQ = self.options.save_freq
         

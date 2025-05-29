@@ -1,13 +1,14 @@
 import torch
-from utils import load_config_file
+from utils import load_config_file, get_device
 from tqdm import tqdm
 import open_clip
 import torch.nn as nn
 import numpy as np
 
+device = get_device()
+
 # TODO: separate config.yaml into a train options and test options
 def evaluate(model, test_loader, top_ks=[1]):
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model.to(device)
     model.eval()
 
