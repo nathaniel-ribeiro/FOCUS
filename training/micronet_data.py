@@ -12,6 +12,7 @@ from utils import load_config_file, load_micronet_metadata
 import torch.multiprocessing as mp
 import albumentations as A
 import math
+import pprint
 
 options = load_config_file('config.yaml')
 data_dir = options.data_dir
@@ -134,12 +135,6 @@ def make_dataloaders():
     return train_loader, val_loader, test_loader
 
 def get_labels():
-    labels = [item['scientific_name'] for item in metadata]
+    labels = [item['scientific_name'] for item in metadata.values()]
     labels = list(set(labels))
     return labels
-
-if __name__ == "__main__":
-    train_loader, val_loader, test_loader = make_dataloaders()
-    for images, ids, prompts in train_loader:
-        print(prompts)
-        break
