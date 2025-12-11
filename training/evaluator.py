@@ -16,12 +16,12 @@ def evaluate(model, test_loader, top_ks=[1]):
     total = 0
 
     with torch.no_grad():
-        for images, ids, prompts in tqdm(test_loader):
+        for images, ids, _ in tqdm(test_loader):
             images = images.to(device)
             labels = ids.to(device)
-            logits = model(images) 
+            probs = model(images) 
 
-            topk_preds = torch.topk(logits, k=max(top_ks), dim=1).indices
+            topk_preds = torch.topk(probs, k=max(top_ks), dim=1).indices
 
             for k in top_ks:
                 correct = topk_preds[:, :k].eq(labels.view(-1, 1)).any(dim=1).sum().item()

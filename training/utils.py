@@ -37,7 +37,7 @@ def load_categories():
 def load_micronet_metadata():
     options = load_config_file('config.yaml')
     data_dir = options.data_dir
-    metadata_filepath = os.path.join(data_dir, 'micronet_metadata.json')
+    metadata_filepath = os.path.join(data_dir, 'micronet_annotations.json')
     with open(metadata_filepath) as f:
         metadata = json.load(f)
     return metadata

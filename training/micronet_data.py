@@ -85,6 +85,12 @@ imagenet_templates = [
     'A photo of a small {label}.',
 ]
 
+def get_labels():
+    labels = [item['species_guess'] for item in metadata.values()]
+    return list(set(labels))
+
+labels = get_labels()
+
 class MicroNetDataset(data.Dataset):
     def __init__(self, ids_json_filepath, images_directory, augmentations, random_prompts=False):
         self.images_directory = images_directory
@@ -93,30 +99,25 @@ class MicroNetDataset(data.Dataset):
         with open(ids_json_filepath) as f:
             self.ids = json.load(f)
 
-    def get_prompt(self, scientific_name):
+    def get_prompt(self, species_guess):
         if self.random_prompts:
             random_template = random.choice(imagenet_templates)
-            random_prompt = random_template.format(label=scientific_name)
+            random_prompt = random_template.format(label=species_guess)
             return random_prompt
         else:
-            return scientific_name
+            return species_guess
     
     def __getitem__(self, idx):
         image_id = self.ids[idx]
         path = os.path.join(data_dir, self.images_directory, f'{image_id}.jpg')
         image_metadata = metadata[image_id]
-        scientific_name = image_metadata['scientific_name']
-
-        if(scientific_name is None):
-            raise ValueError("The requested image does not have a scientific name associated.")
-        
-        image_prompt = self.get_prompt(scientific_name)
+        species_guess = image_metadata['species_guess']
+        image_prompt = self.get_prompt(species_guess)
         image = Image.open(path).convert('RGB')
         image_numpy = np.array(image)
         augmented_image = self.augmentations(image=image_numpy)['image']
-
-        category_id = -1 if math.isnan(image_metadata['taxon_id']) else int(image_metadata['taxon_id'])
-        return augmented_image, category_id, image_prompt
+        # category_id = -1 if math.isnan(image_metadata['taxon_id']) else int(image_metadata['taxon_id'])
+        return augmented_image, labels.index(species_guess), image_prompt
     
     def __len__(self):
         return len(self.ids)
@@ -133,8 +134,3 @@ def make_dataloaders():
     val_loader = data.DataLoader(val_dataset, BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS)
     test_loader = data.DataLoader(test_dataset, BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS)
     return train_loader, val_loader, test_loader
-
-def get_labels():
-    labels = [item['scientific_name'] for item in metadata.values()]
-    labels = list(set(labels))
-    return labels
