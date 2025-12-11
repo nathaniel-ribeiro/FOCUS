@@ -1,7 +1,7 @@
 ---
 data_dir: "../data/"
 target_size: [224, 224]
-batch_size: 256
+batch_size: 1
 # small and fast but inaccurate
 model_name: "ViT-B-32"
 pretrained: "laion2b_s34b_b79k"

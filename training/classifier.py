@@ -13,6 +13,7 @@ class CLIPClassifier(nn.Module):
         # initial value from Wu et. al, 2018
         self.temperature = nn.Parameter(torch.tensor([np.log(1 / 0.07)], dtype=torch.float32))
         self.labels = labels
+        print(len(labels))
     
     def tokenize(self, text):
         return self.tokenizer(text)

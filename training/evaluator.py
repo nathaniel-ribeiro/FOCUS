@@ -6,8 +6,6 @@ import torch.nn as nn
 import numpy as np
 
 device = get_device()
-
-# TODO: separate config.yaml into a train options and test options
 def evaluate(model, test_loader, top_ks=[1]):
     model.to(device)
     model.eval()
