@@ -31,7 +31,7 @@ OPENCLIP_STD  = [0.26862954, 0.26130258, 0.27577711]
 
 train_transforms = A.Compose([
     A.RandomResizedCrop(size=TARGET_SIZE),
-    A.ChromaticAberration(mode="random", p=0.5),
+    A.VerticalFlip(p=0.5),
     A.HorizontalFlip(p=0.5),
     A.Normalize(mean=OPENCLIP_MEAN, std=OPENCLIP_STD), 
     A.ToTensorV2(),
@@ -115,7 +115,7 @@ class MicroNetDataset(data.Dataset):
         image = Image.open(path).convert('RGB')
         image_numpy = np.array(image)
         augmented_image = self.augmentations(image=image_numpy)['image']
-        # category_id = -1 if math.isnan(image_metadata['taxon_id']) else int(image_metadata['taxon_id'])
+
         return augmented_image, labels.index(species_guess), image_prompt
     
     def __len__(self):
