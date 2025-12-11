@@ -69,7 +69,6 @@ imagenet_templates = [
     'A good photo of the {label}.',
     'A close-up photo of the {label}.',
     'A photo of a {label}.',
-    'A origami {label}.',
     'A low resolution photo of a {label}.',
     'A photo of a nice {label}.',
     'A photo of a weird {label}.',
