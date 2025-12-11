@@ -10,8 +10,8 @@ train_loader, val_loader, test_loader = make_dataloaders()
 labels = get_labels()
 
 model = CLIPClassifier(options.model_name, options.pretrained, labels).to(device)
-trainer = Trainer(model, options, train_loader, val_loader, test_loader)
-trainer.train()
+# trainer = Trainer(model, options, train_loader, val_loader, test_loader)
+# trainer.train()
 top_ks = [1, 3, 5]
 top_k_accuracies = evaluate(model, test_loader, top_ks = top_ks)
 

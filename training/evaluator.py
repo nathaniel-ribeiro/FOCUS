@@ -16,7 +16,7 @@ def evaluate(model, test_loader, top_ks=[1]):
     total = 0
 
     with torch.no_grad():
-        for images, ids, _ in tqdm(test_loader):
+        for images, ids, prompts in tqdm(test_loader):
             images = images.to(device)
             labels = ids.to(device)
             logits = model(images) 
