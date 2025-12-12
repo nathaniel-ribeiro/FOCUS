@@ -30,7 +30,7 @@ OPENCLIP_MEAN = [0.48145466, 0.4578275, 0.40821073]
 OPENCLIP_STD  = [0.26862954, 0.26130258, 0.27577711]
 
 train_transforms = A.Compose([
-    A.RandomResizedCrop(size=TARGET_SIZE),
+    A.RandomResizedCrop(size=TARGET_SIZE, scale=(0.7, 1.0), ratio=(0.9, 1.1)),
     A.VerticalFlip(p=0.5),
     A.HorizontalFlip(p=0.5),
     A.Normalize(mean=OPENCLIP_MEAN, std=OPENCLIP_STD), 
